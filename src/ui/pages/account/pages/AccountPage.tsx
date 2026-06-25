@@ -5,7 +5,7 @@ export function AccountPage() {
   const { user } = useAccountController();
 
   return (
-    <div>
+    <div className="container">
       <h1 className="h3 mb-3">My account</h1>
       <ul className={`list-group ${styles.list}`}>
         <li className="list-group-item d-flex justify-content-between">

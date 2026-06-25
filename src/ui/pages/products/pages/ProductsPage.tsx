@@ -22,7 +22,7 @@ export function ProductsPage() {
   } = useProductsController();
 
   return (
-    <div>
+    <div className="container">
       <h1 className="h3 mb-3">Products (CRUD)</h1>
 
       {isLoading && <div className="spinner-border" role="status" />}

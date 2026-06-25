@@ -6,7 +6,7 @@ export function HomePage() {
   const { user, isAuthenticated } = useHomeController();
 
   return (
-    <div>
+    <div className="container">
       <h1 className="h3 mb-3">
         {isAuthenticated ? `Welcome, ${user?.name}` : 'Welcome'}
       </h1>

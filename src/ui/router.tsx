@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { createBrowserRouter } from 'react-router-dom';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { AppLayout } from './components/AppLayout';
 import { LoginPage } from './pages/login';
@@ -6,6 +6,7 @@ import { HomePage } from './pages/home';
 import { AccountPage } from './pages/account';
 import { UsersPage } from './pages/users';
 import { ProductsPage } from './pages/products';
+import { Page404 } from './pages/404';
 
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
@@ -24,7 +25,8 @@ export const router = createBrowserRouter([
           { path: '/products', element: <ProductsPage /> },
         ],
       },
+      // Any URL that did not match the routes above shows the 404 page (still inside the layout).
+      { path: '*', element: <Page404 /> },
     ],
   },
-  { path: '*', element: <Navigate to="/" replace /> },
 ]);

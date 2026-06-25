@@ -136,6 +136,30 @@ the port/adapter pattern but applied to the UI:
   (automatic scoping so class names do not clash across pages).
 - **`index.ts`** - barrel file that re-exports the page for clean imports.
 
+### What is a "barrel" file?
+
+The single-line `index.ts` you find in each page/module folder is called a
+**barrel** (or *barrel file*). It is **not** an architecture - it is just an
+import pattern. Its only job is to **re-export** what the folder wants to expose,
+so others can import from the folder instead of reaching into its internals:
+
+```ts
+// src/ui/pages/404/index.ts  (the barrel)
+export { Page404 } from './pages/Page404';   // re-export
+```
+
+```ts
+// Thanks to the barrel, you import short and stable:
+import { Page404 } from './pages/404';                 // clean
+
+// instead of coupling to the internal path:
+import { Page404 } from './pages/404/pages/Page404';   // fragile
+```
+
+The barrel is the **only** file that knows the internal path, so you can
+reorganize inside the folder without breaking any importer. Every page and
+module folder uses this same pattern.
+
 ---
 
 ## Authentication flow

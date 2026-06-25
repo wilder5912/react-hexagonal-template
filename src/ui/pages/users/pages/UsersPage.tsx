@@ -5,7 +5,7 @@ export function UsersPage() {
   const { users, isLoading, isError } = useUsersController();
 
   return (
-    <div>
+    <div className="container">
       <h1 className="h3 mb-3">Users</h1>
 
       {isLoading && <div className="spinner-border" role="status" />}
