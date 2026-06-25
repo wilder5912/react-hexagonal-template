@@ -4,9 +4,8 @@ import { useAuthStore } from '../stores/authStore';
 import type { Credentials } from '../../modules/auth';
 
 /**
- * Hook de autenticacion: expone login/logout a la UI.
- * React Query maneja el estado de la peticion (loading/error);
- * Zustand guarda la sesion resultante.
+ * Small bridge between the auth module and the UI.
+ * React Query handles the async request state, while Zustand keeps the logged-in user available across the app.
  */
 export function useAuth() {
   const { user, isAuthenticated, setSession, clearSession } = useAuthStore();

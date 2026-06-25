@@ -1,14 +1,12 @@
-// Configuracion central de las APIs externas.
-// Los valores vienen de variables de entorno (.env) via import.meta.env.
-// Se deja un fallback para que la app funcione aunque falte el .env.
+// Central place for API base URLs.
+// We prefer environment variables, but keep safe defaults so the sample app still runs without extra setup.
 
 export const API_BASE_URLS = {
-  // API de ejemplo para usuarios (read). Devuelve datos de prueba.
+  // Read-only demo API for users.
   jsonPlaceholder:
     import.meta.env.VITE_API_USERS_URL ?? 'https://jsonplaceholder.typicode.com',
-  // Endpoint de login real de prueba (DummyJSON): devuelve un token JWT real.
-  // Credenciales demo: username "emilys" / password "emilyspass".
+  // Demo login endpoint from DummyJSON. It returns a real JWT token for sample credentials.
   auth: import.meta.env.VITE_API_AUTH_URL ?? 'https://dummyjson.com/auth',
-  // API de productos (DummyJSON) para el ejemplo de CRUD completo.
+  // Demo products API used by the CRUD example.
   products: import.meta.env.VITE_API_PRODUCTS_URL ?? 'https://dummyjson.com',
 } as const;

@@ -1,7 +1,7 @@
 import type { UserRepository } from '../domain/UserRepository';
 import type { User } from '../domain/User';
 
-// Caso de uso: obtener un usuario por id.
+// Use case for retrieving a single user by id.
 export class FindUser {
   constructor(private readonly repository: UserRepository) {}
 

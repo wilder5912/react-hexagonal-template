@@ -1,8 +1,8 @@
 import type { PasswordHasher } from '../domain/PasswordHasher';
 
 /**
- * Implementacion de PasswordHasher usando WebCrypto (SHA-256).
- * Nativo del navegador, sin dependencias externas.
+ * Browser-native PasswordHasher implementation using WebCrypto (SHA-256).
+ * It keeps the example dependency-free while showing how an infrastructure adapter can satisfy the domain port.
  */
 export class WebCryptoPasswordHasher implements PasswordHasher {
   async hash(value: string): Promise<string> {

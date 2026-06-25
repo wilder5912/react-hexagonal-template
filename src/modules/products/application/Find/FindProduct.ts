@@ -1,7 +1,7 @@
 import type { ProductRepository } from '../../domain/ProductRepository';
 import type { Product } from '../../domain/Product';
 
-// Caso de uso: obtener un producto por id.
+// Use case for loading one product by id.
 export class FindProduct {
   constructor(private readonly repository: ProductRepository) {}
 

@@ -3,8 +3,8 @@ import type { PasswordHasher } from '../domain/PasswordHasher';
 import type { AuthSession, Credentials } from '../domain/AuthUser';
 
 /**
- * Caso de uso: iniciar sesion.
- * Orquesta el dominio y pide la sesion al puerto. No sabe de axios ni React.
+ * Login use case.
+ * It coordinates the small business flow for signing in and stays isolated from UI and transport details.
  */
 export class LoginUser {
   constructor(
@@ -13,8 +13,8 @@ export class LoginUser {
   ) {}
 
   async execute(credentials: Credentials, signal?: AbortSignal): Promise<AuthSession> {
-    // Demostracion del puerto de encriptado: derivamos una huella de la password.
-    // (En produccion el hash real se valida en el BACKEND; esto es ilustrativo.)
+    // We call the hasher here to show how the use case depends on a domain port rather than a concrete crypto library.
+    // In a production system, real password verification still belongs on the backend.
     await this.hasher.hash(credentials.password);
 
     return this.repository.login(credentials, signal);

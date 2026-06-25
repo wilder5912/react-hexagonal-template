@@ -1,4 +1,4 @@
-// Modelo de dominio de Producto.
+// Core product shape used throughout the business layer.
 export interface Product {
   id: number;
   title: string;
@@ -7,7 +7,7 @@ export interface Product {
   stock: number;
 }
 
-// Datos necesarios para crear/editar (sin id: lo asigna el origen al crear).
+// The editable fields for create/update forms. No id here because the backend owns that.
 export interface ProductDraft {
   title: string;
   price: number;
@@ -15,13 +15,13 @@ export interface ProductDraft {
   stock: number;
 }
 
-// Opciones de paginacion que la UI envia al listar.
+// Listing options used to request just one slice of the full product collection.
 export interface SearchOptions {
   limit?: number;
   skip?: number;
 }
 
-// Resultado paginado: los items de la pagina + el total disponible en el origen.
+// A paginated response combines the current items with the total count available on the server.
 export interface ProductPage {
   items: Product[];
   total: number;

@@ -23,82 +23,82 @@ export function ProductsPage() {
 
   return (
     <div>
-      <h1 className="h3 mb-3">Productos (CRUD)</h1>
+      <h1 className="h3 mb-3">Products (CRUD)</h1>
 
       {isLoading && <div className="spinner-border" role="status" />}
-      {isError && <div className="alert alert-danger">No se pudieron cargar los productos.</div>}
+      {isError && <div className="alert alert-danger">Could not load products.</div>}
 
       {products && (
         <div className={styles.layout}>
-          {/* Columna 1: tabla + paginacion */}
+          {/* Column 1: table + pagination */}
           <div>
-          <table className="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Titulo</th>
-                <th>Precio</th>
-                <th>Categoria</th>
-                <th>Stock</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((p) => (
-                <tr key={p.id}>
-                  <td>{p.id}</td>
-                  <td>{p.title}</td>
-                  <td>${p.price}</td>
-                  <td>{p.category}</td>
-                  <td>{p.stock}</td>
-                  <td className="text-nowrap">
-                    <button
-                      className="btn btn-sm btn-outline-secondary me-1"
-                      onClick={() => startEdit(p.id)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => handleDelete(p.id)}
-                      disabled={isMutating}
-                    >
-                      Borrar
-                    </button>
-                  </td>
+            <table className="table table-striped table-hover">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Title</th>
+                  <th>Price</th>
+                  <th>Category</th>
+                  <th>Stock</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {products.map((p) => (
+                  <tr key={p.id}>
+                    <td>{p.id}</td>
+                    <td>{p.title}</td>
+                    <td>${p.price}</td>
+                    <td>{p.category}</td>
+                    <td>{p.stock}</td>
+                    <td className="text-nowrap">
+                      <button
+                        className="btn btn-sm btn-outline-secondary me-1"
+                        onClick={() => startEdit(p.id)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-sm btn-outline-danger"
+                        onClick={() => handleDelete(p.id)}
+                        disabled={isMutating}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
 
-          {/* Controles de paginacion */}
-          <div className="d-flex align-items-center gap-2 mb-3">
-            <button
-              className="btn btn-sm btn-outline-secondary"
-              onClick={prevPage}
-              disabled={page === 0}
-            >
-              ← Anterior
-            </button>
-            <span className="small text-muted">
-              Pagina {page + 1} de {totalPages} ({total} productos)
-            </span>
-            <button
-              className="btn btn-sm btn-outline-secondary"
-              onClick={nextPage}
-              disabled={page >= totalPages - 1}
-            >
-              Siguiente →
-            </button>
-          </div>
+            {/* Pagination controls */}
+            <div className="d-flex align-items-center gap-2 mb-3">
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={prevPage}
+                disabled={page === 0}
+              >
+                Previous
+              </button>
+              <span className="small text-muted">
+                Page {page + 1} of {totalPages} ({total} products)
+              </span>
+              <button
+                className="btn btn-sm btn-outline-secondary"
+                onClick={nextPage}
+                disabled={page >= totalPages - 1}
+              >
+                Next
+              </button>
+            </div>
           </div>
 
-          {/* Columna 2: formulario crear / editar */}
+          {/* Column 2: create / edit form */}
           <form className={`card p-3 ${styles.form}`} onSubmit={handleSubmit}>
-            <h5 className="mb-3">{editingId === null ? 'Nuevo producto' : `Editar #${editingId}`}</h5>
+            <h5 className="mb-3">{editingId === null ? 'New product' : `Edit #${editingId}`}</h5>
 
             <div className="mb-2">
-              <label className="form-label">Titulo</label>
+              <label className="form-label">Title</label>
               <input
                 className="form-control"
                 value={draft.title}
@@ -107,7 +107,7 @@ export function ProductsPage() {
               />
             </div>
             <div className="mb-2">
-              <label className="form-label">Precio</label>
+              <label className="form-label">Price</label>
               <input
                 type="number"
                 className="form-control"
@@ -116,7 +116,7 @@ export function ProductsPage() {
               />
             </div>
             <div className="mb-2">
-              <label className="form-label">Categoria</label>
+              <label className="form-label">Category</label>
               <input
                 className="form-control"
                 value={draft.category}
@@ -135,11 +135,11 @@ export function ProductsPage() {
 
             <div className="d-flex gap-2">
               <button className="btn btn-primary flex-grow-1" disabled={isMutating}>
-                {editingId === null ? 'Crear' : 'Guardar'}
+                {editingId === null ? 'Create' : 'Save'}
               </button>
               {editingId !== null && (
                 <button type="button" className="btn btn-outline-secondary" onClick={startCreate}>
-                  Cancelar
+                  Cancel
                 </button>
               )}
             </div>

@@ -1,7 +1,7 @@
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../app/hooks/useAuth';
 
-/** Layout con navbar. Se muestra en paginas publicas y privadas. */
+/** Shared app shell with the navbar and the main content area. */
 export function AppLayout() {
   const { user, isAuthenticated, logout } = useAuth();
   const navigate = useNavigate();
@@ -25,20 +25,20 @@ export function AppLayout() {
           </li>
           <li className="nav-item">
             <NavLink className="nav-link" to="/users">
-              Usuarios
+              Users
             </NavLink>
           </li>
           {isAuthenticated && (
             <li className="nav-item">
               <NavLink className="nav-link" to="/products">
-                Productos
+                Products
               </NavLink>
             </li>
           )}
           {isAuthenticated && (
             <li className="nav-item">
               <NavLink className="nav-link" to="/account">
-                Cuenta
+                Account
               </NavLink>
             </li>
           )}
@@ -48,12 +48,12 @@ export function AppLayout() {
           <>
             <span className="navbar-text text-light me-3">{user?.name}</span>
             <button className="btn btn-outline-light btn-sm" onClick={handleLogout}>
-              Salir
+              Sign out
             </button>
           </>
         ) : (
           <Link className="btn btn-primary btn-sm" to="/login">
-            Entrar
+            Sign in
           </Link>
         )}
       </nav>
@@ -61,6 +61,10 @@ export function AppLayout() {
       <main className="container py-4 flex-grow-1">
         <Outlet />
       </main>
+
+      <footer className="bg-dark text-light text-center py-3 mt-auto">
+        <small>© {new Date().getFullYear()} base_v1 — Hexagonal template</small>
+      </footer>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-// Modelo de dominio de Usuario.
+// User shape used by the domain and UI once external API data has been normalized.
 export interface User {
   id: number;
   name: string;

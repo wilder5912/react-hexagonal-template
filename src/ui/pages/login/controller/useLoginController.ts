@@ -2,9 +2,9 @@ import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../../../app/hooks/useAuth';
 
-/** Controlador de la pagina de login: estado del formulario + submit. */
+/** Handles the login form state and submit flow for the page. */
 export function useLoginController() {
-  // Credenciales de demo validas en DummyJSON.
+  // Prefilled demo credentials so the sample app works immediately.
   const [username, setUsername] = useState('emilys');
   const [password, setPassword] = useState('emilyspass');
   const { login, isLoggingIn, loginError } = useAuth();
@@ -16,7 +16,7 @@ export function useLoginController() {
       await login({ username, password });
       navigate('/');
     } catch {
-      // El error se muestra en la vista via loginError.
+      // The page already reads loginError from the hook, so there is nothing else to do here.
     }
   }
 

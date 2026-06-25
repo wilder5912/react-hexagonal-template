@@ -2,8 +2,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuthStore } from '../../app/stores/authStore';
 
 /**
- * Guard de rutas: si no hay sesion, redirige a /login.
- * Envuelve las rutas privadas en el router.
+ * Simple guard for private pages.
+ * If we do not have an authenticated session, we redirect to the login page instead of rendering the route.
  */
 export function ProtectedRoute() {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);

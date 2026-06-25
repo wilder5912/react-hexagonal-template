@@ -1,5 +1,5 @@
-// Modelo de dominio: el usuario autenticado y su token.
-// No conoce HTTP ni React; es solo la "verdad" del negocio.
+// Core auth shapes used by the business layer.
+// They stay intentionally simple and know nothing about React, routing, or HTTP details.
 
 export interface AuthUser {
   id: string;

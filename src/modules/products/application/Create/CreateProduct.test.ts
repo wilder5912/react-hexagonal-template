@@ -3,7 +3,7 @@ import { CreateProduct } from './CreateProduct';
 import type { ProductRepository } from '../../domain/ProductRepository';
 import type { Product, ProductDraft } from '../../domain/Product';
 
-// CRUD de escritura testeado con repositorio falso (sin red).
+// This write-side CRUD test uses a fake repository, so we can verify behavior without network calls.
 const draft: ProductDraft = { title: 'Teclado', price: 50, category: 'tech', stock: 10 };
 const created: Product = { id: 123, ...draft };
 

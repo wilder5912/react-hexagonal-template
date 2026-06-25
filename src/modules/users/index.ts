@@ -4,7 +4,7 @@ import { JsonPlaceholderUserRepository } from './infrastructure/JsonPlaceholderU
 import { SearchAllUsers } from './application/SearchAllUsers';
 import { FindUser } from './application/FindUser';
 
-/** Composition root del modulo users. */
+/** Users module composition root. */
 export function createUsersModule() {
   const http = createHttpClient(API_BASE_URLS.jsonPlaceholder);
   const repository = new JsonPlaceholderUserRepository(http);

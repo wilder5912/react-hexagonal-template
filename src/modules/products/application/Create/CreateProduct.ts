@@ -1,7 +1,7 @@
 import type { ProductRepository } from '../../domain/ProductRepository';
 import type { Product, ProductDraft } from '../../domain/Product';
 
-// Caso de uso: crear un producto (POST).
+// Use case for creating a new product.
 export class CreateProduct {
   constructor(private readonly repository: ProductRepository) {}
 

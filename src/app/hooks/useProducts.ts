@@ -6,17 +6,16 @@ const PRODUCTS_KEY = ['products'];
 const PAGE_SIZE = 10;
 
 /**
- * Hook del CRUD de productos con paginacion.
- * - useQuery para la lista (cache por pagina).
- * - useMutation para crear/editar/borrar; al terminar invalida la cache.
+ * Connects the products module to the screen.
+ * Reading uses one cached query per page, while writes use mutations and then refresh the product lists.
  *
- * @param page Pagina actual (empieza en 0).
+ * @param page Zero-based page index used to fetch the current slice of products.
  */
 export function useProducts(page = 0) {
   const queryClient = useQueryClient();
 
   const list = useQuery({
-    // La pagina entra en la key: cada pagina se cachea por separado.
+    // Putting the page in the query key gives each page its own cache entry.
     queryKey: [...PRODUCTS_KEY, page],
     queryFn: ({ signal }) =>
       productsModule.searchAllProducts.execute(
@@ -25,7 +24,7 @@ export function useProducts(page = 0) {
       ),
   });
 
-  // Tras cualquier escritura, invalida TODAS las paginas de productos.
+  // Any create/update/delete can affect the list, so we refresh every cached products page.
   const invalidate = () => queryClient.invalidateQueries({ queryKey: PRODUCTS_KEY });
 
   const createMutation = useMutation({

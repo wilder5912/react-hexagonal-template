@@ -2,7 +2,7 @@ import type { HttpClient } from '../../../shared/http/httpClient';
 import type { ProductRepository } from '../domain/ProductRepository';
 import type { Product, ProductDraft, ProductPage, SearchOptions } from '../domain/Product';
 
-// Forma cruda del JSON externo (DummyJSON).
+// Raw response shape from DummyJSON before we map it into our domain model.
 interface ApiProduct {
   id: number;
   title: string;
@@ -19,12 +19,12 @@ interface ApiProductList {
 const DEFAULT_LIMIT = 10;
 
 function toDomain(api: ApiProduct): Product {
-  // Mapper: JSON externo -> modelo de dominio.
+  // Keep the API-specific mapping in one place so the rest of the app only sees clean domain data.
   return {
     id: api.id,
     title: api.title,
     price: api.price,
-    category: api.category ?? 'sin-categoria',
+    category: api.category ?? 'uncategorized',
     stock: api.stock ?? 0,
   };
 }
@@ -33,7 +33,7 @@ export class ApiProductRepository implements ProductRepository {
   constructor(private readonly http: HttpClient) {}
 
   async search(options: SearchOptions = {}, signal?: AbortSignal): Promise<ProductPage> {
-    // Axios convierte el objeto `params` en query string: ?limit=10&skip=20
+    // Axios turns `params` into the expected query string, e.g. ?limit=10&skip=20.
     const data = await this.http.get<ApiProductList>('/products', {
       params: {
         limit: options.limit ?? DEFAULT_LIMIT,

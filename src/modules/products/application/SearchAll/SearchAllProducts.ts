@@ -1,7 +1,7 @@
 import type { ProductRepository } from '../../domain/ProductRepository';
 import type { ProductPage, SearchOptions } from '../../domain/Product';
 
-// Caso de uso: listar productos paginados (limit + skip).
+// Use case for fetching one paginated slice of products.
 export class SearchAllProducts {
   constructor(private readonly repository: ProductRepository) {}
 

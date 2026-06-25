@@ -3,18 +3,18 @@ import { SearchAllUsers } from './SearchAllUsers';
 import type { UserRepository } from '../domain/UserRepository';
 import type { User } from '../domain/User';
 
-// Aqui se ve el PAGO de la arquitectura hexagonal:
-// el caso de uso depende del PUERTO (UserRepository), no de Axios ni de una API.
-// Por eso podemos inyectar un repositorio FALSO y testear sin red.
+// This is the nice part of the hexagonal approach:
+// the use case depends on a contract, not on Axios or a real API,
+// so testing it with a fake repository stays fast and straightforward.
 
 const fakeUsers: User[] = [
-  { id: 1, name: 'Ada', email: 'ada@mail.com', username: 'ada', company: 'X', city: 'Londres' },
+  { id: 1, name: 'Ada', email: 'ada@mail.com', username: 'ada', company: 'X', city: 'London' },
   { id: 2, name: 'Alan', email: 'alan@mail.com', username: 'alan', company: 'Y', city: 'Bletchley' },
 ];
 
 describe('SearchAllUsers', () => {
-  it('devuelve los usuarios que entrega el repositorio', async () => {
-    // Doble de prueba: implementa el puerto sin tocar la red.
+  it('returns the users provided by the repository', async () => {
+    // Tiny fake that satisfies the repository contract without touching the network.
     const repository: UserRepository = {
       search: vi.fn().mockResolvedValue(fakeUsers),
       find: vi.fn(),
@@ -27,7 +27,7 @@ describe('SearchAllUsers', () => {
     expect(repository.search).toHaveBeenCalledOnce();
   });
 
-  it('propaga el AbortSignal al repositorio', async () => {
+  it('propagates the AbortSignal to the repository', async () => {
     const repository: UserRepository = {
       search: vi.fn().mockResolvedValue([]),
       find: vi.fn(),

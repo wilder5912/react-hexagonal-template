@@ -1,6 +1,6 @@
 import { useUsers } from '../../../../app/hooks/useUsers';
 
-/** Controlador de la pagina de usuarios: expone los datos de la tabla. */
+/** Keeps the users page focused on rendering by exposing only the data it needs. */
 export function useUsersController() {
   const { data: users, isLoading, isError } = useUsers();
   return { users, isLoading, isError };

@@ -2,11 +2,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { JsonPlaceholderUserRepository } from './JsonPlaceholderUserRepository';
 import type { HttpClient } from '../../../shared/http/httpClient';
 
-// Test del ADAPTADOR: que traduzca bien el JSON externo al modelo de dominio.
-// Inyectamos un HttpClient falso para no llamar a la API real.
+// This test focuses on the adapter's real job:
+// taking raw API data and turning it into the user shape our app expects.
 
 describe('JsonPlaceholderUserRepository', () => {
-  it('mapea el JSON externo al modelo de dominio', async () => {
+  it('maps external JSON into the domain model', async () => {
     const http: HttpClient = {
       get: vi.fn().mockResolvedValue([
         {
@@ -15,7 +15,7 @@ describe('JsonPlaceholderUserRepository', () => {
           email: 'ada@mail.com',
           username: 'ada',
           company: { name: 'Analytical Engines' },
-          address: { city: 'Londres' },
+          address: { city: 'London' },
         },
       ]),
       post: vi.fn(),
@@ -33,15 +33,15 @@ describe('JsonPlaceholderUserRepository', () => {
         email: 'ada@mail.com',
         username: 'ada',
         company: 'Analytical Engines',
-        city: 'Londres',
+        city: 'London',
       },
     ]);
   });
 
-  it('usa valores por defecto cuando faltan company y address', async () => {
+  it('uses default values when company and address are missing', async () => {
     const http: HttpClient = {
       get: vi.fn().mockResolvedValue([
-        { id: 2, name: 'Sin datos', email: 'x@mail.com', username: 'x' },
+        { id: 2, name: 'No data', email: 'x@mail.com', username: 'x' },
       ]),
       post: vi.fn(),
       put: vi.fn(),
@@ -51,7 +51,7 @@ describe('JsonPlaceholderUserRepository', () => {
     const repo = new JsonPlaceholderUserRepository(http);
     const [user] = await repo.search();
 
-    expect(user.company).toBe('Sin empresa');
-    expect(user.city).toBe('Sin ciudad');
+    expect(user.company).toBe('No company');
+    expect(user.city).toBe('No city');
   });
 });

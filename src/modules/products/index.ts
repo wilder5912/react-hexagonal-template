@@ -7,7 +7,7 @@ import { CreateProduct } from './application/Create/CreateProduct';
 import { UpdateProduct } from './application/Update/UpdateProduct';
 import { DeleteProduct } from './application/Delete/DeleteProduct';
 
-/** Composition root del modulo products (CRUD completo). */
+/** Products module composition root for the full CRUD example. */
 export function createProductsModule() {
   const http = createHttpClient(API_BASE_URLS.products);
   const repository = new ApiProductRepository(http);

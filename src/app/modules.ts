@@ -3,9 +3,9 @@ import { createUsersModule } from '../modules/users';
 import { createProductsModule } from '../modules/products';
 
 /**
- * Instancias unicas de los modulos hexagonales para toda la app.
- * Los hooks de React importan desde aqui; asi la inyeccion de dependencias
- * queda centralizada y es facil de sustituir en tests.
+ * This is the app's "wiring" file.
+ * We create one instance of each hexagonal module here and let the React hooks consume them.
+ * Keeping that setup in one place makes the app easier to follow and simpler to swap in tests.
  */
 export const authModule = createAuthModule();
 export const usersModule = createUsersModule();

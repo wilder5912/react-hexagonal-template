@@ -6,10 +6,10 @@ export function AccountPage() {
 
   return (
     <div>
-      <h1 className="h3 mb-3">Mi cuenta</h1>
+      <h1 className="h3 mb-3">My account</h1>
       <ul className={`list-group ${styles.list}`}>
         <li className="list-group-item d-flex justify-content-between">
-          <span className="text-muted">Nombre</span>
+          <span className="text-muted">Name</span>
           <span>{user?.name}</span>
         </li>
         <li className="list-group-item d-flex justify-content-between">

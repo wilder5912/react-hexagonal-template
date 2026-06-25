@@ -2,7 +2,7 @@ import type { HttpClient } from '../../../shared/http/httpClient';
 import type { UserRepository } from '../domain/UserRepository';
 import type { User } from '../domain/User';
 
-// Forma cruda del JSON externo (jsonplaceholder).
+// Raw response shape from JSONPlaceholder before we convert it into our domain model.
 interface ApiUser {
   id: number;
   name: string;
@@ -13,14 +13,14 @@ interface ApiUser {
 }
 
 function toDomain(api: ApiUser): User {
-  // Mapper: traduce el JSON externo al modelo de dominio.
+  // Keep the translation here so the rest of the app can work with a stable user shape.
   return {
     id: api.id,
     name: api.name,
     email: api.email,
     username: api.username,
-    company: api.company?.name ?? 'Sin empresa',
-    city: api.address?.city ?? 'Sin ciudad',
+    company: api.company?.name ?? 'No company',
+    city: api.address?.city ?? 'No city',
   };
 }
 

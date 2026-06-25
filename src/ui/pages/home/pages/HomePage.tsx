@@ -8,15 +8,15 @@ export function HomePage() {
   return (
     <div>
       <h1 className="h3 mb-3">
-        {isAuthenticated ? `Bienvenido, ${user?.name}` : 'Bienvenido'}
+        {isAuthenticated ? `Welcome, ${user?.name}` : 'Welcome'}
       </h1>
       <p className="text-muted">
-        Plantilla base con arquitectura hexagonal, TypeScript, React Query y Zustand.
+        Base template with hexagonal architecture, TypeScript, React Query, and Zustand.
       </p>
 
       {!isAuthenticated && (
         <Link className="btn btn-primary mb-3" to="/login">
-          Iniciar sesion
+          Sign in
         </Link>
       )}
 
@@ -26,7 +26,7 @@ export function HomePage() {
             <div className="card-body">
               <h5 className="card-title">Hexagonal</h5>
               <p className="card-text small text-muted">
-                Dominio, aplicacion e infraestructura separados por modulo.
+                Domain, application, and infrastructure separated by module.
               </p>
             </div>
           </div>
@@ -36,7 +36,7 @@ export function HomePage() {
             <div className="card-body">
               <h5 className="card-title">React Query</h5>
               <p className="card-text small text-muted">
-                Cache y estado del servidor sin useEffect manual.
+                Cache and server state without manual `useEffect`.
               </p>
             </div>
           </div>
@@ -46,7 +46,7 @@ export function HomePage() {
             <div className="card-body">
               <h5 className="card-title">Zustand</h5>
               <p className="card-text small text-muted">
-                Estado global de sesion, persistido.
+                Persisted global session state.
               </p>
             </div>
           </div>

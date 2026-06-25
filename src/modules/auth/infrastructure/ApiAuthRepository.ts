@@ -2,7 +2,7 @@ import type { HttpClient } from '../../../shared/http/httpClient';
 import type { AuthRepository } from '../domain/AuthRepository';
 import type { AuthSession, Credentials } from '../domain/AuthUser';
 
-// Forma cruda que devuelve DummyJSON al hacer login.
+// The login API does not return our domain shape directly, so we describe its raw response here first.
 interface ApiLoginResponse {
   accessToken: string;
   id: number;
@@ -13,8 +13,8 @@ interface ApiLoginResponse {
 }
 
 /**
- * Adaptador: implementa el puerto AuthRepository contra una API REST real.
- * Traduce el JSON externo al modelo de dominio (AuthSession).
+ * Real auth adapter backed by HTTP.
+ * Its job is to call the external API and translate that response into the AuthSession shape the rest of the app understands.
  */
 export class ApiAuthRepository implements AuthRepository {
   constructor(private readonly http: HttpClient) {}
@@ -38,8 +38,8 @@ export class ApiAuthRepository implements AuthRepository {
   }
 
   async logout(): Promise<void> {
-    // DummyJSON no tiene endpoint de logout; el borrado del token
-    // se gestiona en el store. Aqui quedaria la llamada real si existiera.
+    // DummyJSON does not expose a logout endpoint.
+    // In this demo, clearing the local session is enough. A real API call would be added here if needed.
     return Promise.resolve();
   }
 }

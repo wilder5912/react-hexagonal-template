@@ -1,7 +1,7 @@
 import type { ProductRepository } from '../../domain/ProductRepository';
 import type { Product, ProductDraft } from '../../domain/Product';
 
-// Caso de uso: actualizar un producto (PUT).
+// Use case for updating an existing product.
 export class UpdateProduct {
   constructor(private readonly repository: ProductRepository) {}
 

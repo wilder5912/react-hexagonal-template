@@ -1,6 +1,6 @@
 import type { ProductRepository } from '../../domain/ProductRepository';
 
-// Caso de uso: eliminar un producto (DELETE).
+// Use case for removing a product.
 export class DeleteProduct {
   constructor(private readonly repository: ProductRepository) {}
 

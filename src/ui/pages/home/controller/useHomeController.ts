@@ -1,6 +1,6 @@
 import { useAuth } from '../../../../app/hooks/useAuth';
 
-/** Controlador de la home: estado de sesion para saludar y mostrar el CTA. */
+/** Small controller for the home screen greeting and login call-to-action. */
 export function useHomeController() {
   const { user, isAuthenticated } = useAuth();
   return { user, isAuthenticated };

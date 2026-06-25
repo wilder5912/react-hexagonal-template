@@ -1,9 +1,8 @@
 import axios, { type AxiosInstance, type AxiosRequestConfig } from 'axios';
 
 /**
- * Cliente HTTP central (adaptador de red).
- * Toda la app habla con APIs externas a traves de aqui: un solo lugar
- * para baseURL, headers, token de auth y manejo de errores.
+ * Shared HTTP adapter for the whole app.
+ * Every external API call goes through here so base URLs, headers, auth token handling, and error behavior stay consistent.
  */
 export interface HttpClient {
   get<T>(url: string, config?: AxiosRequestConfig): Promise<T>;
@@ -18,7 +17,7 @@ export function createHttpClient(baseURL: string, defaultHeaders: Record<string,
     headers: { 'Content-Type': 'application/json', ...defaultHeaders },
   });
 
-  // Inyecta el token guardado (si existe) en cada peticion.
+  // If we already have a saved token, attach it automatically to every request.
   instance.interceptors.request.use((config) => {
     const token = localStorage.getItem('auth_token');
     if (token) {

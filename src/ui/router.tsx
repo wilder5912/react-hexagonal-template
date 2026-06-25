@@ -10,14 +10,14 @@ import { ProductsPage } from './pages/products';
 export const router = createBrowserRouter([
   { path: '/login', element: <LoginPage /> },
   {
-    // El layout (con navbar) envuelve tanto paginas publicas como privadas.
+    // The shared layout gives both public and private pages the same navbar and page shell.
     element: <AppLayout />,
     children: [
-      // Publicas: visibles sin sesion.
+      // These routes stay open even when nobody is logged in.
       { path: '/', element: <HomePage /> },
       { path: '/users', element: <UsersPage /> },
       {
-        // Privadas: requieren sesion (ProtectedRoute redirige a /login).
+        // These routes are behind auth. If there is no session, ProtectedRoute sends the user to /login.
         element: <ProtectedRoute />,
         children: [
           { path: '/account', element: <AccountPage /> },

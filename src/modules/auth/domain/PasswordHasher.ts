@@ -1,13 +1,10 @@
 /**
- * Puerto para encriptado/derivacion de contrasenas.
+ * Contract for hashing or deriving sensitive values on the client.
  *
- * IMPORTANTE: en una app real el hash de password se hace en el BACKEND.
- * Hashear en el frontend NO sustituye HTTPS ni la seguridad del servidor.
- * Aqui se modela como puerto del dominio para:
- *   - poder firmar/derivar valores en cliente cuando haga falta,
- *   - dejar el patron listo para inyectar una implementacion real.
+ * Important note: this does not replace proper backend-side auth or HTTPS.
+ * It exists here mainly to demonstrate the port/adaptor style and to leave room for real client-side derivation when needed.
  */
 export interface PasswordHasher {
-  // Devuelve un hash (hex) del valor dado. Asincrono porque WebCrypto lo es.
+  // Returns a hex hash of the input. It is async because browser crypto APIs are async too.
   hash(value: string): Promise<string>;
 }

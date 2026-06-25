@@ -1,6 +1,6 @@
 import type { AuthRepository } from '../domain/AuthRepository';
 
-// Caso de uso: cerrar sesion.
+// Minimal logout use case: delegate the sign-out action to the auth repository.
 export class LogoutUser {
   constructor(private readonly repository: AuthRepository) {}
 

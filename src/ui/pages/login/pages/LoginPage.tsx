@@ -9,15 +9,15 @@ export function LoginPage() {
     <div className={styles.screen}>
       <div className={`card shadow-sm ${styles.card}`}>
         <div className="card-body">
-          <h1 className="h4 mb-3 text-center">Iniciar sesion</h1>
+          <h1 className="h4 mb-3 text-center">Sign in</h1>
 
           {loginError && (
-            <div className="alert alert-danger py-2">Credenciales invalidas.</div>
+            <div className="alert alert-danger py-2">Invalid credentials.</div>
           )}
 
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label className="form-label">Usuario</label>
+              <label className="form-label">Username</label>
               <input
                 type="text"
                 className="form-control"
@@ -27,7 +27,7 @@ export function LoginPage() {
               />
             </div>
             <div className="mb-3">
-              <label className="form-label">Contrasena</label>
+              <label className="form-label">Password</label>
               <input
                 type="password"
                 className="form-control"
@@ -37,7 +37,7 @@ export function LoginPage() {
               />
             </div>
             <button className="btn btn-primary w-100" disabled={isLoggingIn}>
-              {isLoggingIn ? 'Entrando...' : 'Entrar'}
+              {isLoggingIn ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
         </div>

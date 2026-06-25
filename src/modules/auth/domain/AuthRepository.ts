@@ -1,12 +1,12 @@
 import type { AuthSession, Credentials } from './AuthUser';
 
 /**
- * Puerto del dominio para autenticacion.
- * Infrastructure provee el adaptador concreto (API real, mock, etc.).
+ * Authentication contract seen from the domain's point of view.
+ * The domain only cares about what auth can do, not whether the implementation uses HTTP, mocks, or something else.
  */
 export interface AuthRepository {
-  // Intercambia credenciales por una sesion (usuario + token).
+  // Turn user credentials into an authenticated session.
   login(credentials: Credentials, signal?: AbortSignal): Promise<AuthSession>;
-  // Invalida la sesion en el origen (si la API lo soporta).
+  // End the session at the source when the backend supports it.
   logout(signal?: AbortSignal): Promise<void>;
 }

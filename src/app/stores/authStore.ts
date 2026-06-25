@@ -3,9 +3,9 @@ import { persist } from 'zustand/middleware';
 import type { AuthUser } from '../../modules/auth';
 
 /**
- * Store global de autenticacion (Zustand).
- * Guarda la sesion y la persiste en localStorage para sobrevivir recargas.
- * El httpClient lee `auth_token` de localStorage para inyectar el Bearer.
+ * Central place for the logged-in user and token.
+ * We persist it so a browser refresh does not log the user out immediately.
+ * The HTTP client reads `auth_token` from localStorage and adds it to protected requests.
  */
 interface AuthState {
   user: AuthUser | null;

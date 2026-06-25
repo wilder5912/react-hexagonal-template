@@ -5,11 +5,11 @@ import type { ProductDraft } from '../../../../modules/products';
 const EMPTY_DRAFT: ProductDraft = { title: '', price: 0, category: '', stock: 0 };
 
 /**
- * Controlador de la pagina de productos: tabla + formulario de crear/editar + borrar.
- * Toda la logica de UI vive aqui; la pagina solo pinta.
+ * This controller keeps the products page dumb and focused on markup.
+ * It owns pagination, edit state, form state, and the actions behind create/update/delete.
  */
 export function useProductsController() {
-  // Pagina actual (empieza en 0). Se la pasamos al hook de datos.
+  // Zero-based page index used by the products query hook.
   const [page, setPage] = useState(0);
   const {
     products,
@@ -23,7 +23,7 @@ export function useProductsController() {
     isMutating,
   } = useProducts(page);
 
-  // Si editingId es null estamos creando; si tiene valor, editando ese producto.
+  // `null` means "create mode". Any number means "edit that existing product".
   const [editingId, setEditingId] = useState<number | null>(null);
   const [draft, setDraft] = useState<ProductDraft>(EMPTY_DRAFT);
 
@@ -51,14 +51,14 @@ export function useProductsController() {
     } else {
       await updateProduct({ id: editingId, draft });
     }
-    startCreate(); // limpia el formulario
+    startCreate(); // Reset the form after a successful save so the UI goes back to create mode.
   }
 
   async function handleDelete(id: number) {
     await deleteProduct(id);
   }
 
-  // Navegacion de paginas (sin pasarse de los limites).
+  // Keep pagination safe by clamping the value instead of letting it drift out of range.
   function nextPage() {
     setPage((p) => Math.min(p + 1, totalPages - 1));
   }

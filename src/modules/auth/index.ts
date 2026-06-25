@@ -6,8 +6,8 @@ import { LoginUser } from './application/LoginUser';
 import { LogoutUser } from './application/LogoutUser';
 
 /**
- * Composition root del modulo auth.
- * Arma infraestructura + casos de uso y expone una API simple para la UI.
+ * Auth module composition root.
+ * This is where we decide which concrete repository and hasher the auth use cases should use.
  */
 export function createAuthModule() {
   const http = createHttpClient(API_BASE_URLS.auth);
@@ -22,5 +22,5 @@ export function createAuthModule() {
 
 export type AuthModule = ReturnType<typeof createAuthModule>;
 
-// Re-export de tipos de dominio para uso comodo en la UI.
+// Re-export the domain types so UI code can import them from one friendly place.
 export type { AuthSession, AuthUser, Credentials } from './domain/AuthUser';

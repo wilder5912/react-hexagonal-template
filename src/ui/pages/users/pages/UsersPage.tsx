@@ -6,20 +6,20 @@ export function UsersPage() {
 
   return (
     <div>
-      <h1 className="h3 mb-3">Usuarios</h1>
+      <h1 className="h3 mb-3">Users</h1>
 
       {isLoading && <div className="spinner-border" role="status" />}
-      {isError && <div className="alert alert-danger">No se pudieron cargar los usuarios.</div>}
+      {isError && <div className="alert alert-danger">Could not load users.</div>}
 
       {users && (
         <table className={`table table-striped table-hover ${styles.table}`}>
           <thead>
             <tr>
               <th>ID</th>
-              <th>Nombre</th>
+              <th>Name</th>
               <th>Email</th>
-              <th>Empresa</th>
-              <th>Ciudad</th>
+              <th>Company</th>
+              <th>City</th>
             </tr>
           </thead>
           <tbody>

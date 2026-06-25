@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { usersModule } from '../modules';
 
 /**
- * Hook de datos para la tabla de usuarios.
- * React Query se encarga de cache, reintentos y estados de carga.
+ * Thin query hook for the users screen.
+ * It keeps the component simple and leaves caching/loading concerns to React Query.
  */
 export function useUsers() {
   return useQuery({

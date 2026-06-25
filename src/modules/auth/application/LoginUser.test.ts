@@ -4,8 +4,8 @@ import type { AuthRepository } from '../domain/AuthRepository';
 import type { PasswordHasher } from '../domain/PasswordHasher';
 import type { AuthSession } from '../domain/AuthUser';
 
-// El caso de uso depende de DOS puertos (repository + hasher).
-// Ambos se inyectan como dobles: el login se prueba sin red ni WebCrypto reales.
+// Login depends on two contracts: the repository and the hasher.
+// Because both are injected, we can test the behavior without real HTTP calls or browser crypto.
 
 const session: AuthSession = {
   token: 'fake-token',
@@ -17,7 +17,7 @@ function makeHasher(): PasswordHasher {
 }
 
 describe('LoginUser', () => {
-  it('devuelve la sesion que entrega el repositorio', async () => {
+  it('returns the session provided by the repository', async () => {
     const repository: AuthRepository = {
       login: vi.fn().mockResolvedValue(session),
       logout: vi.fn(),
@@ -29,7 +29,7 @@ describe('LoginUser', () => {
     expect(result).toEqual(session);
   });
 
-  it('deriva la password con el hasher antes de pedir la sesion', async () => {
+  it('derives the password with the hasher before requesting the session', async () => {
     const hasher = makeHasher();
     const repository: AuthRepository = {
       login: vi.fn().mockResolvedValue(session),
@@ -37,13 +37,13 @@ describe('LoginUser', () => {
     };
 
     const useCase = new LoginUser(repository, hasher);
-    await useCase.execute({ username: 'emilys', password: 'secreto' });
+    await useCase.execute({ username: 'emilys', password: 'secret' });
 
-    expect(hasher.hash).toHaveBeenCalledWith('secreto');
+    expect(hasher.hash).toHaveBeenCalledWith('secret');
     expect(repository.login).toHaveBeenCalledOnce();
   });
 
-  it('propaga el error si el repositorio falla (credenciales invalidas)', async () => {
+  it('propagates the error if the repository fails (invalid credentials)', async () => {
     const repository: AuthRepository = {
       login: vi.fn().mockRejectedValue(new Error('401')),
       logout: vi.fn(),
