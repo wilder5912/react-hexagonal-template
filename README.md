@@ -1,90 +1,91 @@
-# base_v1 — Plantilla React + Arquitectura Hexagonal
+# base_v1 - React Template + Hexagonal Architecture
 
-Plantilla base reutilizable para proyectos React medianos/grandes. Combina
-**arquitectura hexagonal** (puertos y adaptadores) con el stack moderno de React:
+Reusable base template for medium/large React projects. It combines
+**hexagonal architecture** (ports and adapters) with the modern React stack:
 **TypeScript + React Query + Zustand + React Router + Bootstrap**.
 
-Incluye como ejemplo funcional:
+It includes the following working examples:
 
-- **Login real** contra una API (con token JWT y rutas protegidas).
-- **Encriptado** de contraseña en cliente vía WebCrypto (puerto del dominio).
-- **Tabla de usuarios** (solo lectura) alimentada por React Query.
-- **CRUD completo de productos** (crear/leer/editar/borrar) — el ejemplo de
-  referencia del patrón hexagonal de punta a punta.
-- Páginas **Home**, **Account**, **Login**, **Usuarios** y **Productos** navegables.
+- **Real login** against an API (with JWT token and protected routes).
+- **Password encryption** on the client side through WebCrypto (domain port).
+- **Users table** (read-only) powered by React Query.
+- **Full product CRUD** (create/read/update/delete) as the end-to-end reference
+  example for the hexagonal pattern.
+- Navigable **Home**, **Account**, **Login**, **Users**, and **Products** pages.
 
 ---
 
 ## Stack
 
-| Capa | Tecnología | Rol |
+| Layer | Technology | Role |
 |---|---|---|
-| Lenguaje | **TypeScript** | Tipado estático en todo el proyecto |
-| Build | **Vite** | Dev server y bundler |
-| Datos / servidor | **React Query (TanStack)** | Cache, estados de carga, reintentos |
-| Estado global | **Zustand** | Sesión de auth (persistida en localStorage) |
-| Routing | **React Router** | Rutas y guards de rutas protegidas |
-| HTTP | **Axios** | Cliente HTTP central con interceptores |
-| UI | **Bootstrap** | Estilos |
+| Language | **TypeScript** | Static typing across the whole project |
+| Build | **Vite** | Dev server and bundler |
+| Data / server | **React Query (TanStack)** | Cache, loading states, retries |
+| Global state | **Zustand** | Auth session state (persisted in localStorage) |
+| Routing | **React Router** | Routing and protected-route guards |
+| HTTP | **Axios** | Central HTTP client with interceptors |
+| UI | **Bootstrap** | Styling |
 
 ---
 
-## Arquitectura
+## Architecture
 
-El proyecto separa **lógica de negocio** (módulos hexagonales) de la **UI** y del
-**puente con React** (store + hooks). La regla de oro: las dependencias apuntan
-siempre hacia el dominio, nunca al revés.
+The project separates **business logic** (hexagonal modules) from the **UI** and
+the **React bridge** (`store` + hooks). The golden rule is: dependencies always
+point toward the domain, never the other way around.
 
 ```
 UI (React)
-  → app/ (hooks + store)          ← puente React ↔ módulos
-    → modules/<x>/ (hexagonal)    ← lógica pura, sin React
-      ├── domain/                 ← modelos + puertos (interfaces)
-      ├── application/            ← casos de uso
-      └── infrastructure/         ← adaptadores (API, crypto, ...)
-    → shared/                     ← http client, config
+  -> app/ (hooks + store)          <- React bridge <-> modules
+    -> modules/<x>/ (hexagonal)    <- pure logic, no React
+      |-- domain/                  <- models + ports (interfaces)
+      |-- application/             <- use cases
+      `-- infrastructure/          <- adapters (API, crypto, ...)
+    -> shared/                     <- http client, config
 ```
 
-### Las 3 capas de cada módulo
+### The 3 layers in each module
 
-- **`domain/`** — Modelos (`AuthUser`, `User`) y **puertos** (interfaces como
-  `AuthRepository`, `PasswordHasher`). No conoce HTTP ni React. Es la "verdad" del negocio.
-- **`application/`** — **Casos de uso** (`LoginUser`, `SearchAllUsers`). Orquestan el
-  dominio. Reciben los puertos por inyección en el constructor.
-- **`infrastructure/`** — **Adaptadores** que implementan los puertos
-  (`ApiAuthRepository` con Axios, `WebCryptoPasswordHasher` con WebCrypto). Aquí vive
-  todo lo "sucio": fetch, mapeo de JSON externo, librerías.
+- **`domain/`** - Models (`AuthUser`, `User`) and **ports** (interfaces such as
+  `AuthRepository`, `PasswordHasher`). It knows nothing about HTTP or React. This
+  is the business "source of truth".
+- **`application/`** - **Use cases** (`LoginUser`, `SearchAllUsers`). They
+  orchestrate the domain and receive ports through constructor injection.
+- **`infrastructure/`** - **Adapters** that implement the ports
+  (`ApiAuthRepository` with Axios, `WebCryptoPasswordHasher` with WebCrypto).
+  Everything "dirty" lives here: fetches, external JSON mapping, libraries.
 
-Cada módulo expone un **composition root** (`index.ts`) que arma infraestructura +
-casos de uso y devuelve una API simple para la UI.
+Each module exposes a **composition root** (`index.ts`) that wires
+infrastructure + use cases together and returns a simple API for the UI.
 
-### El puente con React (`app/`)
+### The React bridge (`app/`)
 
-La UI **no** instancia los módulos directamente. Lo hace a través de:
+The UI does **not** instantiate modules directly. It does so through:
 
-- **`app/modules.ts`** — instancia única de cada módulo (inyección centralizada).
-- **`app/stores/authStore.ts`** — store Zustand con la sesión (persistida).
-- **`app/hooks/`** — hooks que envuelven los casos de uso con React Query
-  (`useAuth`, `useUsers`). Aquí se decide cache, loading y errores.
+- **`app/modules.ts`** - single instance of each module (centralized injection).
+- **`app/stores/authStore.ts`** - Zustand store with the persisted session.
+- **`app/hooks/`** - hooks that wrap use cases with React Query
+  (`useAuth`, `useUsers`). This is where cache, loading, and error handling are decided.
 
-> Esto permite testear los módulos con un adaptador falso sin tocar React.
+> This makes it possible to test modules with fake adapters without touching React.
 
 ---
 
-## Estructura de carpetas
+## Folder structure
 
 ```
 src/
-  app/                      # puente React ↔ hexagonal
+  app/                      # React <-> hexagonal bridge
     hooks/
       useAuth.ts            # login/logout (React Query + Zustand)
-      useUsers.ts           # tabla de usuarios (React Query)
-      useProducts.ts        # CRUD de productos (query + mutations)
+      useUsers.ts           # users table (React Query)
+      useProducts.ts        # product CRUD (query + mutations)
     stores/
-      authStore.ts          # sesión global (Zustand + persist)
-    modules.ts              # instancias únicas de los módulos
+      authStore.ts          # global session (Zustand + persist)
+    modules.ts              # singleton module instances
 
-  modules/                  # lógica de negocio (hexagonal, sin React)
+  modules/                  # business logic (hexagonal, no React)
     auth/
       domain/               # AuthUser, AuthRepository, PasswordHasher
       application/          # LoginUser, LogoutUser
@@ -95,79 +96,79 @@ src/
       application/          # SearchAllUsers, FindUser
       infrastructure/       # JsonPlaceholderUserRepository
       index.ts
-    products/               # CRUD completo (ejemplo de referencia)
-      domain/               # Product, ProductRepository (5 operaciones)
+    products/               # full CRUD (reference example)
+      domain/               # Product, ProductRepository (5 operations)
       application/          # SearchAll/ Find/ Create/ Update/ Delete/
       infrastructure/       # ApiProductRepository
       index.ts
 
-  shared/                   # transversal
-    config/apiConfig.ts     # URLs base de las APIs
-    http/httpClient.ts      # cliente Axios + interceptor de token
+  shared/                   # cross-cutting concerns
+    config/apiConfig.ts     # base API URLs
+    http/httpClient.ts      # Axios client + token interceptor
 
-  ui/                       # presentación (React)
-    components/             # ProtectedRoute, AppLayout (sin lógica de página)
-    pages/                  # una carpeta autocontenida por página
+  ui/                       # presentation (React)
+    components/             # ProtectedRoute, AppLayout (no page logic)
+    pages/                  # one self-contained folder per page
       home/
-        controller/         # useHomeController.ts  (lógica)
-        css/                # HomePage.module.css   (estilos con scope)
-        pages/              # HomePage.tsx           (vista)
+        controller/         # useHomeController.ts  (logic)
+        css/                # HomePage.module.css   (scoped styles)
+        pages/              # HomePage.tsx          (view)
         index.ts            # barrel
-      login/                # (misma estructura)
-      users/                # (misma estructura)
-      products/             # (misma estructura) — CRUD con tabla + formulario
-      account/              # (misma estructura)
-    router.tsx              # rutas (públicas + protegidas)
+      login/                # (same structure)
+      users/                # (same structure)
+      products/             # (same structure) - CRUD with table + form
+      account/              # (same structure)
+    router.tsx              # routes (public + protected)
 
   App.tsx                   # providers (React Query + Router)
-  main.tsx                  # entrada + import de Bootstrap
+  main.tsx                  # entrypoint + Bootstrap import
 ```
 
-### Patrón de página (controller / css / vista)
+### Page pattern (controller / css / view)
 
-Cada página separa **lógica** de **presentación**, siguiendo la misma idea que el
-patrón puerto/adaptador pero aplicada a la UI:
+Each page separates **logic** from **presentation**, following the same idea as
+the port/adapter pattern but applied to the UI:
 
-- **`controller/useXxxController.ts`** — estado, handlers y datos (hooks). Testeable
-  sin renderizar.
-- **`pages/XxxPage.tsx`** — solo la vista (JSX). Consume el controller.
-- **`css/XxxPage.module.css`** — estilos propios con **CSS Modules** (scope
-  automático: las clases no chocan entre páginas).
-- **`index.ts`** — barrel que reexporta la página para imports limpios.
-
----
-
-## Flujo de autenticación
-
-1. `LoginPage` llama a `useAuth().login({ username, password })`.
-2. El hook ejecuta el caso de uso `LoginUser` (React Query maneja loading/error).
-3. `LoginUser` deriva una huella de la password con `PasswordHasher` (WebCrypto) y
-   pide la sesión al puerto `AuthRepository`.
-4. `ApiAuthRepository` hace `POST /login` y traduce la respuesta a `AuthSession`.
-5. El hook guarda la sesión en `authStore` (Zustand) → se persiste el token.
-6. `httpClient` inyecta `Authorization: Bearer <token>` en las siguientes peticiones.
-7. `ProtectedRoute` deja pasar a las rutas privadas.
-
-> **Nota de seguridad:** hashear la contraseña en el frontend **no** sustituye HTTPS
-> ni la validación en el backend. El `PasswordHasher` está como ejemplo del patrón
-> puerto/adaptador; en producción la autenticación real se valida en el servidor.
+- **`controller/useXxxController.ts`** - state, handlers, and data (hooks).
+  Testable without rendering.
+- **`pages/XxxPage.tsx`** - just the view (JSX). It consumes the controller.
+- **`css/XxxPage.module.css`** - page-specific styles with **CSS Modules**
+  (automatic scoping so class names do not clash across pages).
+- **`index.ts`** - barrel file that re-exports the page for clean imports.
 
 ---
 
-## Ejemplo de referencia: CRUD de productos
+## Authentication flow
 
-El módulo `products` es el ejemplo **completo** del patrón hexagonal: tiene las cinco
-operaciones (listar, buscar, crear, actualizar, borrar) contra una API real
-(DummyJSON). Úsalo como molde para tus propios módulos con escritura.
+1. `LoginPage` calls `useAuth().login({ username, password })`.
+2. The hook executes the `LoginUser` use case (React Query handles loading/errors).
+3. `LoginUser` derives a password fingerprint with `PasswordHasher` (WebCrypto) and
+   requests the session from the `AuthRepository` port.
+4. `ApiAuthRepository` performs `POST /login` and maps the response to `AuthSession`.
+5. The hook stores the session in `authStore` (Zustand) -> the token is persisted.
+6. `httpClient` injects `Authorization: Bearer <token>` into subsequent requests.
+7. `ProtectedRoute` allows access to private routes.
 
-Su capa Application agrupa los casos de uso **por carpeta de acción** (útil cuando
-hay varias operaciones):
+> **Security note:** hashing the password in the frontend does **not** replace HTTPS
+> or backend validation. `PasswordHasher` is included as a port/adapter pattern
+> example; in production, real authentication must be validated on the server.
+
+---
+
+## Reference example: Product CRUD
+
+The `products` module is the **complete** hexagonal pattern example: it includes
+all five operations (list, find, create, update, delete) against a real API
+(DummyJSON). Use it as a template for your own writable modules.
+
+Its Application layer groups use cases **by action folder** (useful when there
+are several operations):
 
 ```
 modules/products/
   domain/
-    Product.ts              # modelo + ProductDraft (datos para crear/editar)
-    ProductRepository.ts    # puerto con las 5 operaciones
+    Product.ts              # model + ProductDraft (data for create/edit)
+    ProductRepository.ts    # port with the 5 operations
   application/
     SearchAll/SearchAllProducts.ts
     Find/FindProduct.ts
@@ -175,121 +176,122 @@ modules/products/
     Update/UpdateProduct.ts
     Delete/DeleteProduct.ts
   infrastructure/
-    ApiProductRepository.ts # adaptador: GET/POST/PUT/DELETE + mapper
+    ApiProductRepository.ts # adapter: GET/POST/PUT/DELETE + mapper
   index.ts                  # composition root
 ```
 
-El flujo de una escritura (crear):
+The write flow for creating a product:
 
-1. `ProductsPage` envía el formulario → `useProductsController` llama a `createProduct`.
-2. El hook `useProducts` ejecuta una **mutation** de React Query sobre el caso de uso
-   `CreateProduct`.
-3. `CreateProduct` delega en el puerto `ProductRepository.create()`.
-4. `ApiProductRepository` hace `POST /products/add` y mapea la respuesta a `Product`.
-5. Al terminar, la mutation **invalida la cache** de `['products']` → la tabla se
-   recarga sola con el dato nuevo.
+1. `ProductsPage` submits the form -> `useProductsController` calls `createProduct`.
+2. The `useProducts` hook runs a React Query **mutation** over the `CreateProduct`
+   use case.
+3. `CreateProduct` delegates to `ProductRepository.create()`.
+4. `ApiProductRepository` performs `POST /products/add` and maps the response to `Product`.
+5. When it finishes, the mutation **invalidates the `['products']` cache** -> the table
+   reloads automatically with the new item.
 
-> **Sobre el verbo HTTP:** solo el adaptador sabe que `create` es un `POST`, `update`
-> un `PUT` y `remove` un `DELETE`. El caso de uso y la UI hablan en términos de negocio
-> (crear/actualizar/borrar), no de HTTP.
+> **About the HTTP verb:** only the adapter knows that `create` is a `POST`,
+> `update` is a `PUT`, and `remove` is a `DELETE`. The use case and UI speak in
+> business terms (create/update/delete), not HTTP terms.
 
 ---
 
-## Comandos
+## Commands
 
 ```bash
-npm install        # instalar dependencias
-npm run dev        # servidor de desarrollo (http://localhost:5173)
-npm run build      # typecheck (tsc) + build de producción
-npm run preview    # servir el build
-npm test           # ejecutar los tests (Vitest)
-npm run test:watch # tests en modo watch
+npm install        # install dependencies
+npm run dev        # development server (http://localhost:5173)
+npm run build      # typecheck (tsc) + production build
+npm run preview    # serve the build
+npm test           # run tests (Vitest)
+npm run test:watch # tests in watch mode
 ```
 
-### Credenciales de demo
+### Demo credentials
 
-El login apunta a [DummyJSON](https://dummyjson.com/docs/auth) (API de prueba, sin key):
+The login points to [DummyJSON](https://dummyjson.com/docs/auth) (test API, no key required):
 
-```
-usuario:    emilys
-contraseña: emilyspass
+```text
+username: emilys
+password: emilyspass
 ```
 
 ---
 
-## Variables de entorno
+## Environment variables
 
-Las URLs de las APIs viven en variables de entorno (Vite expone solo las que
-empiezan con `VITE_`). Se leen en [`apiConfig.ts`](src/shared/config/apiConfig.ts)
-vía `import.meta.env`, con un fallback por si falta el `.env`.
+API URLs live in environment variables (Vite only exposes variables that start
+with `VITE_`). They are read in [`apiConfig.ts`](src/shared/config/apiConfig.ts)
+through `import.meta.env`, with a fallback in case `.env` is missing.
 
-| Archivo | Uso | ¿Se commitea? |
+| File | Use | Committed? |
 |---|---|---|
-| `.env` | Valores por defecto de desarrollo | ✅ Sí |
-| `.env.example` | Plantilla a copiar | ✅ Sí |
-| `.env.local` | Secretos / sobrescrituras locales | ❌ No (en `.gitignore`) |
+| `.env` | Default development values | Yes |
+| `.env.example` | Template to copy | Yes |
+| `.env.local` | Secrets / local overrides | No (`.gitignore`) |
 
 ```bash
 VITE_API_USERS_URL=https://jsonplaceholder.typicode.com
 VITE_API_AUTH_URL=https://dummyjson.com/auth
 ```
 
-Los tipos están declarados en [`src/vite-env.d.ts`](src/vite-env.d.ts) para
-autocompletado y errores si se usa una variable inexistente.
+Types are declared in [`src/vite-env.d.ts`](src/vite-env.d.ts) for autocomplete
+and errors when a non-existent variable is used.
 
 ---
 
 ## Tests
 
-Los tests usan **Vitest** y se ubican junto al código (`*.test.ts`). Demuestran el
-valor de la arquitectura: como los casos de uso dependen de **puertos** (interfaces),
-se prueban inyectando dobles falsos — **sin red, sin API, sin DOM**.
+Tests use **Vitest** and are colocated with the code (`*.test.ts`). They show the
+value of the architecture: because use cases depend on **ports** (interfaces),
+they can be tested by injecting fakes - **no network, no API, no DOM**.
 
 ```bash
 npm test
 ```
 
-Cubren:
+Coverage includes:
 
-- **`SearchAllUsers`** — caso de uso con un `UserRepository` falso.
-- **`JsonPlaceholderUserRepository`** — el adaptador, con un `HttpClient` falso
-  (verifica el mapeo JSON externo → dominio y los valores por defecto).
-- **`LoginUser`** — caso de uso con `AuthRepository` y `PasswordHasher` falsos
-  (verifica que el hasher se invoca y que los errores se propagan).
-- **`CreateProduct`** — caso de uso de escritura con `ProductRepository` falso
-  (verifica que el draft se pasa al repositorio y que los errores se propagan).
+- **`SearchAllUsers`** - use case with a fake `UserRepository`.
+- **`JsonPlaceholderUserRepository`** - the adapter, with a fake `HttpClient`
+  (verifies external JSON -> domain mapping and default values).
+- **`LoginUser`** - use case with fake `AuthRepository` and `PasswordHasher`
+  (verifies the hasher is invoked and errors are propagated).
+- **`CreateProduct`** - write use case with a fake `ProductRepository`
+  (verifies the draft is passed to the repository and errors are propagated).
 
-> Ejemplo del patrón: el test inyecta `{ search: vi.fn().mockResolvedValue(...) }`
-> como repositorio. El caso de uso no nota la diferencia con el real — esa es la
-> ventaja de depender de la interfaz y no de la implementación.
-
----
-
-## Cómo añadir un módulo nuevo
-
-1. Crea `src/modules/<nombre>/` con las carpetas `domain/`, `application/`, `infrastructure/`.
-2. **Domain:** define el modelo y el puerto (interface del repositorio).
-3. **Application:** crea los casos de uso (una clase por acción).
-4. **Infrastructure:** implementa el puerto contra tu API (con el `httpClient`).
-5. **`index.ts`:** arma el composition root y expón los casos de uso.
-6. Registra la instancia en `app/modules.ts` y crea un hook en `app/hooks/`.
-7. Conéctalo a una página (ver abajo) y a una ruta en `ui/router.tsx`.
-
-## Cómo añadir una página nueva
-
-1. Crea `src/ui/pages/<nombre>/` con las subcarpetas `controller/`, `css/`, `pages/`.
-2. **`controller/use<Nombre>Controller.ts`** — la lógica (estado, handlers, hooks de datos).
-3. **`pages/<Nombre>Page.tsx`** — la vista; consume el controller y los estilos.
-4. **`css/<Nombre>Page.module.css`** — estilos con scope.
-5. **`index.ts`** — `export { <Nombre>Page } from './pages/<Nombre>Page';`.
-6. Añade la ruta en `ui/router.tsx` (pública, o dentro de `ProtectedRoute` si es privada).
+> Pattern example: the test injects `{ search: vi.fn().mockResolvedValue(...) }`
+> as the repository. The use case does not notice the difference from the real one.
+> That is the benefit of depending on the interface instead of the implementation.
 
 ---
 
-## Cuándo usar (y cuándo no) esta arquitectura
+## How to add a new module
 
-✅ **Buena** para apps con lógica de negocio real, varios orígenes de datos, equipos
-grandes o necesidad de tests aislados.
+1. Create `src/modules/<name>/` with `domain/`, `application/`, and `infrastructure/`.
+2. **Domain:** define the model and the port (repository interface).
+3. **Application:** create the use cases (one class per action).
+4. **Infrastructure:** implement the port against your API (using `httpClient`).
+5. **`index.ts`:** wire the composition root and expose the use cases.
+6. Register the instance in `app/modules.ts` and create a hook in `app/hooks/`.
+7. Connect it to a page (see below) and a route in `ui/router.tsx`.
 
-⚠️ **Excesiva** para CRUDs simples o prototipos: genera bastante boilerplate (un caso
-de uso = varios archivos). Para algo pequeño, un `api.ts` + un hook basta.
+## How to add a new page
+
+1. Create `src/ui/pages/<name>/` with `controller/`, `css/`, and `pages/`.
+2. **`controller/use<Name>Controller.ts`** - the logic (state, handlers, data hooks).
+3. **`pages/<Name>Page.tsx`** - the view; it consumes the controller and styles.
+4. **`css/<Name>Page.module.css`** - scoped styles.
+5. **`index.ts`** - `export { <Name>Page } from './pages/<Name>Page';`.
+6. Add the route in `ui/router.tsx` (public, or inside `ProtectedRoute` if private).
+
+---
+
+## When to use (and not use) this architecture
+
+Yes, it is **a good fit** for apps with real business logic, multiple data
+sources, larger teams, or a need for isolated tests.
+
+Use with caution when it is **too heavy** for simple CRUD apps or prototypes:
+it introduces a fair amount of boilerplate (one use case = several files). For
+something small, an `api.ts` file plus a hook is often enough.
