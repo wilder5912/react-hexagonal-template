@@ -1,12 +1,17 @@
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useProducts } from '../../../../app/hooks/useProducts';
-import type { ProductDraft } from '../../../../modules/products';
+import { productSchema, type ProductFormValues } from './productSchema';
 
-const EMPTY_DRAFT: ProductDraft = { title: '', price: 0, category: '', stock: 0 };
+const EMPTY_DRAFT: ProductFormValues = { title: '', price: 0, category: '', stock: 0 };
 
 /**
  * This controller keeps the products page dumb and focused on markup.
- * It owns pagination, edit state, form state, and the actions behind create/update/delete.
+ * It owns pagination, edit state, and the actions behind create/update/delete.
+ *
+ * The form itself is handled by react-hook-form + zod: `register` wires inputs,
+ * `errors` exposes validation messages, and `submit` only runs once the schema passes.
  */
 export function useProductsController() {
   // Zero-based page index used by the products query hook.
@@ -25,18 +30,27 @@ export function useProductsController() {
 
   // `null` means "create mode". Any number means "edit that existing product".
   const [editingId, setEditingId] = useState<number | null>(null);
-  const [draft, setDraft] = useState<ProductDraft>(EMPTY_DRAFT);
+
+  const {
+    register,
+    handleSubmit: rhfHandleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<ProductFormValues>({
+    resolver: zodResolver(productSchema),
+    defaultValues: EMPTY_DRAFT,
+  });
 
   function startCreate() {
     setEditingId(null);
-    setDraft(EMPTY_DRAFT);
+    reset(EMPTY_DRAFT); // Clear the form and any validation errors.
   }
 
   function startEdit(id: number) {
     const product = products?.find((p) => p.id === id);
     if (!product) return;
     setEditingId(id);
-    setDraft({
+    reset({
       title: product.title,
       price: product.price,
       category: product.category,
@@ -44,15 +58,15 @@ export function useProductsController() {
     });
   }
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
+  // Only runs when validation passes; `values` is already typed and coerced by zod.
+  const submit = rhfHandleSubmit(async (values) => {
     if (editingId === null) {
-      await createProduct(draft);
+      await createProduct(values);
     } else {
-      await updateProduct({ id: editingId, draft });
+      await updateProduct({ id: editingId, draft: values });
     }
     startCreate(); // Reset the form after a successful save so the UI goes back to create mode.
-  }
+  });
 
   async function handleDelete(id: number) {
     await deleteProduct(id);
@@ -75,11 +89,11 @@ export function useProductsController() {
     isError,
     isMutating,
     editingId,
-    draft,
-    setDraft,
+    register,
+    errors,
+    submit,
     startCreate,
     startEdit,
-    handleSubmit,
     handleDelete,
     nextPage,
     prevPage,

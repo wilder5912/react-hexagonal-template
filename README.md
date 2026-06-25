@@ -2,7 +2,10 @@
 
 Reusable base template for medium/large React projects. It combines
 **hexagonal architecture** (ports and adapters) with the modern React stack:
-**TypeScript + React Query + Zustand + React Router + Bootstrap**.
+**TypeScript + React Query + Zustand + React Router + React Hook Form + Zod + Bootstrap**.
+
+> **Requirements:** Node.js **>= 20.19** (Vite 8 needs Node 20.19+ or 22.12+;
+> developed and tested on Node **24**). Check yours with `node --version`.
 
 It includes the following working examples:
 
@@ -24,6 +27,8 @@ It includes the following working examples:
 | Data / server | **React Query (TanStack)** | Cache, loading states, retries |
 | Global state | **Zustand** | Auth session state (persisted in localStorage) |
 | Routing | **React Router** | Routing and protected-route guards |
+| Forms | **React Hook Form** | Form state with minimal re-renders |
+| Validation | **Zod** | Type-safe form schemas (via `@hookform/resolvers`) |
 | HTTP | **Axios** | Central HTTP client with interceptors |
 | UI | **Bootstrap** | Styling |
 
@@ -159,6 +164,76 @@ import { Page404 } from './pages/404/pages/Page404';   // fragile
 The barrel is the **only** file that knows the internal path, so you can
 reorganize inside the folder without breaking any importer. Every page and
 module folder uses this same pattern.
+
+---
+
+## Forms: React Hook Form + Zod
+
+Forms are handled with **React Hook Form** (state + submit) and **Zod**
+(validation), wired together by **`@hookform/resolvers`**. The validation rules
+live in a small schema file next to the controller, so the controller stays
+focused on actions and the view stays focused on markup.
+
+**1. Define the schema** (`controller/<name>Schema.ts`). Zod is the single source
+of truth for both the validation rules and the TypeScript type:
+
+```ts
+import { z } from 'zod';
+
+export const productSchema = z.object({
+  title: z.string().trim().min(1, 'Title is required'),
+  price: z.number({ message: 'Price is required' }).min(0, 'Price must be 0 or greater'),
+  category: z.string().trim().min(1, 'Category is required'),
+  stock: z.number().int('Stock must be a whole number').min(0, 'Stock must be 0 or greater'),
+});
+
+export type ProductFormValues = z.infer<typeof productSchema>; // type derived from the schema
+```
+
+**2. Wire it in the controller** with `useForm` + `zodResolver`. The controller
+exposes `register`, `errors`, and a `submit` handler that only runs once
+validation passes:
+
+```ts
+const {
+  register,
+  handleSubmit,
+  reset,
+  formState: { errors },
+} = useForm<ProductFormValues>({
+  resolver: zodResolver(productSchema),
+  defaultValues: EMPTY_DRAFT,
+});
+
+// `values` is already validated and typed when this runs.
+const submit = handleSubmit(async (values) => {
+  await createProduct(values);
+  reset(EMPTY_DRAFT);
+});
+```
+
+**3. Bind the inputs in the view** with `register`. Show errors with Bootstrap's
+`is-invalid` / `invalid-feedback` classes:
+
+```tsx
+<form onSubmit={submit} noValidate>
+  <input
+    className={`form-control${errors.title ? ' is-invalid' : ''}`}
+    {...register('title')}
+  />
+  {errors.title && <div className="invalid-feedback">{errors.title.message}</div>}
+</form>
+```
+
+> **Number inputs:** an `<input type="number">` still returns a *string*. Register
+> it with `{...register('price', { valueAsNumber: true })}` so the value reaches
+> Zod as a real `number` and `z.number()` validates it (no `z.coerce` needed).
+
+Worked examples in the codebase:
+
+- [`LoginPage`](src/ui/pages/login) - minimal two-field form.
+- [`ProductsPage`](src/ui/pages/products) - create/edit form with numbers and
+  `reset()` to switch between create and edit modes.
 
 ---
 
@@ -308,6 +383,9 @@ Coverage includes:
 4. **`css/<Name>Page.module.css`** - scoped styles.
 5. **`index.ts`** - `export { <Name>Page } from './pages/<Name>Page';`.
 6. Add the route in `ui/router.tsx` (public, or inside `ProtectedRoute` if private).
+
+> If the page has a form, add a `controller/<name>Schema.ts` with the Zod schema
+> and wire it with React Hook Form (see [Forms](#forms-react-hook-form--zod)).
 
 ---
 

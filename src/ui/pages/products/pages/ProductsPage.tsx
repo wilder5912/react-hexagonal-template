@@ -11,11 +11,11 @@ export function ProductsPage() {
     isError,
     isMutating,
     editingId,
-    draft,
-    setDraft,
+    register,
+    errors,
+    submit,
     startCreate,
     startEdit,
-    handleSubmit,
     handleDelete,
     nextPage,
     prevPage,
@@ -93,44 +93,44 @@ export function ProductsPage() {
             </div>
           </div>
 
-          {/* Column 2: create / edit form */}
-          <form className={`card p-3 ${styles.form}`} onSubmit={handleSubmit}>
+          {/* Column 2: create / edit form (validated with react-hook-form + zod) */}
+          <form className={`card p-3 ${styles.form}`} onSubmit={submit} noValidate>
             <h5 className="mb-3">{editingId === null ? 'New product' : `Edit #${editingId}`}</h5>
 
             <div className="mb-2">
               <label className="form-label">Title</label>
               <input
-                className="form-control"
-                value={draft.title}
-                onChange={(e) => setDraft({ ...draft, title: e.target.value })}
-                required
+                className={`form-control${errors.title ? ' is-invalid' : ''}`}
+                {...register('title')}
               />
+              {errors.title && <div className="invalid-feedback">{errors.title.message}</div>}
             </div>
             <div className="mb-2">
               <label className="form-label">Price</label>
               <input
                 type="number"
-                className="form-control"
-                value={draft.price}
-                onChange={(e) => setDraft({ ...draft, price: Number(e.target.value) })}
+                step="any"
+                className={`form-control${errors.price ? ' is-invalid' : ''}`}
+                {...register('price', { valueAsNumber: true })}
               />
+              {errors.price && <div className="invalid-feedback">{errors.price.message}</div>}
             </div>
             <div className="mb-2">
               <label className="form-label">Category</label>
               <input
-                className="form-control"
-                value={draft.category}
-                onChange={(e) => setDraft({ ...draft, category: e.target.value })}
+                className={`form-control${errors.category ? ' is-invalid' : ''}`}
+                {...register('category')}
               />
+              {errors.category && <div className="invalid-feedback">{errors.category.message}</div>}
             </div>
             <div className="mb-3">
               <label className="form-label">Stock</label>
               <input
                 type="number"
-                className="form-control"
-                value={draft.stock}
-                onChange={(e) => setDraft({ ...draft, stock: Number(e.target.value) })}
+                className={`form-control${errors.stock ? ' is-invalid' : ''}`}
+                {...register('stock', { valueAsNumber: true })}
               />
+              {errors.stock && <div className="invalid-feedback">{errors.stock.message}</div>}
             </div>
 
             <div className="d-flex gap-2">
